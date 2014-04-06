@@ -9,18 +9,41 @@ module.exports = function (grunt) {
             dist: [ "dist" ]
         },
 
+        copy: {
+            app: {
+                files: [{
+                    expand: true,
+                    cwd: 'app',
+                    src: ['**/*.html', '**/*.css', '**/*.js'],
+                    dest: 'dist'
+                }]
+            }
+        },
+
         useminPrepare: {
-            html: [ 'app/index.html' ],
+            html: [ 'dist/index.html' ],
             options: {
-                root: 'app',
+                root: 'dist',
                 dest: 'dist'
             }
         },
 
         usemin: {
-            html: [ 'app/index.html' ],
+            html: [ 'dist/index.html' ],
             options: {
-                assetsDirs: 'app/'
+                assetsDirs: 'dist/'
+            }
+        },
+
+        hashres: {
+            options: {
+                encoding: 'utf8',
+                fileNameFormat: '${name}.v${hash}.${ext}',
+                renameFiles: true
+            },
+            dist: {
+                src: [ 'dist/js/page.js', 'dist/css/page.css' ],
+                dest: 'dist/index.html'
             }
         }
 
@@ -30,10 +53,15 @@ module.exports = function (grunt) {
     require('matchdep').filterDev('grunt-*').forEach(grunt.loadNpmTasks);
 
     // our tasks
-    grunt.registerTask('build', [
+    grunt.registerTask('default', [
         'clean',
+        'copy',
         'useminPrepare',
-        'usemin'
+        'usemin',
+        'concat',
+        'uglify',
+        'cssmin',
+        'hashres'
     ]);
 
 };
